@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#
+# 写注释!
+
+
+cp -rf $1 $1.bak
