@@ -2,26 +2,11 @@
 #
 # this is system tools
 
+function loadusernumber() {
+  echo "online user's number is: $(w | grep -v "load average" | grep -v "USER" | wc -l)"
+}
 
-while true;do
-  cat <<-EOF
-  ++++++++++++++++++++++++++++++++++++++++++
-  |             system tools               |
-  ++++++++++++++++++++++++++++++++++++++++++
-  |      a. Load user number               |
-  |      b. Add user of system             |
-  |      c. /opt's file number             |
-  |      d. yum repo's number              |
-  |      e. alive ipaddress                |
-  |      q. exit                           |
-  ++++++++++++++++++++++++++++++++++++++++++
-EOF
-  printf "\e[1;31mplease input your choose: \e[0m" && read choose
-  case ${choose} in
-    a)
-      echo "online user's number is: $(w | grep -v "load average" | grep -v "USER" | wc -l)"
-      ;;
-    b)
+function adduser() {
       read -p "Username: " username
       awk -F":" '{ print $1 }' /etc/passwd | grep ${username} &>/dev/null
       if [ $? -eq 0 ];then
@@ -45,29 +30,63 @@ EOF
       if [ ${loginstyle} == "login" ];then
         useradd -u ${uids} -g ${gids} -d ${homepath} -s ${logstyle} ${username}
       elif [ ${loginstyle} == "nologin" ];then
-        useradd -u ${uids} -g ${gids} -d ${homepath} -s ${logstyle} ${username}
+        useradd -u ${uids} -g ${gids} -d ${homepath} -s ${logstyle} ${username}  
       else
-        echo "your input error!"
+        echo "your input error!" 
       fi
+}
+
+function optfilenumber() {
+  echo "/opt dir file number: $(ls -l /opt | wc -l)"
+}
+
+function yumreponumber() {
+  echo "yum repo number: $(ls -l /etc/yum.repos.d | wc -l)"
+}
+
+function aliveip() {
+  >/opt/onlineipaddress
+  for ip in {2..254};do
+    {
+      ping -c1 192.168.123.${ip} &>/dev/null
+      if [ $? -eq 0 ];then
+        echo "192.168.123.${ip}" >>/opt/onlineipaddress
+      fi
+    }&
+  done
+  wait
+  cat /opt/onlineipaddress
+}
+
+while true;do
+  cat <<-EOF
+  ++++++++++++++++++++++++++++++++++++++++++
+  |             system tools               |
+  ++++++++++++++++++++++++++++++++++++++++++
+  |      a. Load user number               |
+  |      b. Add user of system             |
+  |      c. /opt's file number             |
+  |      d. yum repo's number              |
+  |      e. alive ipaddress                |
+  |      q. exit                           |
+  ++++++++++++++++++++++++++++++++++++++++++
+EOF
+  printf "\e[1;31mplease input your choose: \e[0m" && read choose
+  case ${choose} in
+    a)
+      loadusernumber
+      ;;
+    b)
+      adduser
       ;;
     c)
-      echo "/opt dir file number: $(ls -l /opt | wc -l)"
+      optfilenumber
       ;;
     d)
-      echo "yum repo number: $(ls -l /etc/yum.repos.d | wc -l)"
+      yumreponumber
       ;;
     e)
-      >/opt/onlineipaddress
-      for ip in {2..254};do
-        {
-          ping -c1 192.168.123.${ip} &>/dev/null
-          if [ $? -eq 0 ];then
-            echo "192.168.123.${ip}" >>/opt/onlineipaddress
-          fi
-        }&
-      done
-      wait
-      cat /opt/onlineipaddress
+      aliveip
       ;;
     q)
       exit
