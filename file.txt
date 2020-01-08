@@ -1,0 +1,8 @@
+文件系统                类型      容量  已用  可用 已用% 挂载点
+devtmpfs                devtmpfs  475M     0  475M    0% /dev
+tmpfs                   tmpfs     487M     0  487M    0% /dev/shm
+tmpfs                   tmpfs     487M  7.6M  479M    2% /run
+tmpfs                   tmpfs     487M     0  487M    0% /sys/fs/cgroup
+/dev/mapper/centos-root xfs       8.0G  5.6G  2.5G   70% /
+/dev/sda1               xfs      1014M  137M  878M   14% /boot
+tmpfs                   tmpfs      98M     0   98M    0% /run/user/0
